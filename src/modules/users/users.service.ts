@@ -6,15 +6,22 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/services/prisma.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     createUserDto.nick = createUserDto.nick.toLowerCase();
     try {
-      return await this.prisma.user.create({ data: createUserDto });
+      const user = await this.prisma.user.create({ data: createUserDto });
+      const secret = await this.jwt.signAsync(user);
+
+      return { user, secret };
     } catch (e) {
       if (e.code === 'P2002')
         throw new ConflictException(
