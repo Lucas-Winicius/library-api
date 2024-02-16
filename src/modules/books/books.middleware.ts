@@ -10,9 +10,8 @@ import { Request, Response, NextFunction } from 'express';
 export class AuthMiddleware implements NestMiddleware {
   constructor(private jwt: JwtService) {}
   async use(req: Request, res: Response, next: NextFunction) {
-    const userCookie = req.headers.authorization.split(' ')[1];
-
     try {
+      const userCookie = req.headers.authorization.split(' ')[1];
       await this.jwt.verifyAsync(userCookie);
       next();
     } catch (e) {
