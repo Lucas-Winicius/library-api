@@ -27,7 +27,30 @@ export class BooksService {
     return this.prisma.book.update({ where: { id }, data: updateBookDto });
   }
 
-  remove(id: string) {
-    return this.prisma.book.delete({ where: { id } });
+  async remove(id: string) {
+    return await this.prisma.book.delete({ where: { id } });
+  }
+
+  async search(searchTerm: string) {
+    const books = await this.prisma.book.findMany({
+      where: {
+        OR: [
+          {
+            id: { contains: searchTerm, mode: 'insensitive' },
+          },
+          {
+            name: { contains: searchTerm, mode: 'insensitive' },
+          },
+          {
+            author: { contains: searchTerm, mode: 'insensitive' },
+          },
+          {
+            category: { contains: searchTerm, mode: 'insensitive' },
+          },
+        ],
+      },
+    });
+
+    return books;
   }
 }

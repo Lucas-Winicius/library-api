@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   Put,
+  Query,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -18,6 +19,11 @@ export class BooksController {
   @Post()
   create(@Body() createBookDto: CreateBookDto) {
     return this.booksService.create(createBookDto);
+  }
+
+  @Get('search')
+  search(@Query('q') q: string) {
+    return this.booksService.search(q);
   }
 
   @Get()
