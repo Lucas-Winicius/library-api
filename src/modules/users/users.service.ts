@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -59,5 +60,26 @@ export class UsersService {
 
   async remove(id: string) {
     return this.prisma.user.delete({ where: { id } });
+  }
+
+  async signin(credentials: { nick: string; pass: string }) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          AND: [
+            { nick: { equals: credentials.nick, mode: 'insensitive' } },
+            { pass: { equals: credentials.pass } },
+          ],
+        },
+      });
+
+      if (!user) throw new UnauthorizedException();
+
+      const secret = await this.jwt.signAsync(user);
+
+      return { user, secret };
+    } catch (e) {
+      throw e;
+    }
   }
 }

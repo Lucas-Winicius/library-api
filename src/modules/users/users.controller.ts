@@ -6,18 +6,29 @@ import {
   Param,
   Delete,
   Put,
+  Response,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import CookieOptions from './constants/cookiesOptions';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Post('signup')
+  async create(@Body() createUserDto: CreateUserDto, @Response() res) {
+    const user = await this.usersService.create(createUserDto);
+
+    res.cookie('userAuthToken', user.secret, CookieOptions);
+
+    res.cookie(
+      'userRole',
+      user.user.admin ? 'ADMIN' : 'DEFAULT',
+      CookieOptions,
+    );
+
+    res.json(user.user);
   }
 
   @Get()
@@ -43,5 +54,23 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Post('signin')
+  async signin(
+    @Body('credentials') credentials: { nick: string; pass: string },
+    @Response() res,
+  ) {
+    const user = await this.usersService.signin(credentials);
+
+    res.cookie('userAuthToken', user.secret, CookieOptions);
+
+    res.cookie(
+      'userRole',
+      user.user.admin ? 'ADMIN' : 'DEFAULT',
+      CookieOptions,
+    );
+
+    res.json(user.user);
   }
 }
