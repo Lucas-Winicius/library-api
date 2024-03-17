@@ -7,6 +7,6 @@ export class AppController {
 
   @Get()
   recomendations() {
-    return this.appService.recomendations();
+    return this.appService.recommendations();
   }
 }
