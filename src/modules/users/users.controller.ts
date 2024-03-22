@@ -28,7 +28,11 @@ export class UsersController {
       CookieOptions,
     );
 
-    res.json(user.user);
+    res.json({
+      user: { nick: user.user.nick, name: user.user.name },
+      secret: user.secret,
+      role: user.user.admin ? 'ADMIN' : 'DEFAULT',
+    });
   }
 
   @Get()
