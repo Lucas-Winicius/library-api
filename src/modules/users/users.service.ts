@@ -20,7 +20,7 @@ export class UsersService {
     createUserDto.nick = createUserDto.nick.toLowerCase();
     try {
       const user = await this.prisma.user.create({ data: createUserDto });
-      const secret = await this.jwt.signAsync(user);
+      const secret = await this.jwt.signAsync({ id: user.id });
 
       return { user, secret };
     } catch (e) {
@@ -75,7 +75,7 @@ export class UsersService {
 
       if (!user) throw new UnauthorizedException();
 
-      const secret = await this.jwt.signAsync(user);
+      const secret = await this.jwt.signAsync({ id: user.id });
 
       return { user, secret };
     } catch (e) {
