@@ -12,7 +12,7 @@ export class BooksService {
   }
 
   async findAll() {
-    return await this.prisma.book.findMany();
+    return await this.prisma.book.findMany({ orderBy: { createdAt: 'asc' } });
   }
 
   async findOne(id: string) {
