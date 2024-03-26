@@ -22,10 +22,11 @@ export class AuthMiddlewareUser implements NestMiddleware {
         where: { id: token.id },
       });
 
-      if (user.admin || user.id !== userEditedId)
-        throw new UnauthorizedException();
+      if (user.id === userEditedId) return next();
 
-      next();
+      if (user.admin) return next();
+
+      throw new UnauthorizedException();
     } catch (e) {
       throw new UnauthorizedException();
     }
