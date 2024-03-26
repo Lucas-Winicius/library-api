@@ -35,7 +35,16 @@ export class UsersService {
   }
 
   async findAll() {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      select: {
+        id: true,
+        admin: true,
+        name: true,
+        nick: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
   }
 
   async findOne(id: string) {
@@ -55,7 +64,14 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return this.prisma.user.update({ where: { id }, data: updateUserDto });
+    const originalUser = await this.prisma.user.findUnique({ where: { id } });
+
+    if (!originalUser) throw new NotFoundException();
+
+    return this.prisma.user.update({
+      where: { id },
+      data: { ...originalUser, ...updateUserDto },
+    });
   }
 
   async remove(id: string) {

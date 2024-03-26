@@ -5,7 +5,7 @@ import {
   Body,
   Param,
   Delete,
-  Put,
+  Patch,
   Response,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -50,7 +50,7 @@ export class UsersController {
     return this.usersService.findOneByNick(nick);
   }
 
-  @Put(':id')
+  @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
