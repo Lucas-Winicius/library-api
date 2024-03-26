@@ -22,6 +22,10 @@ export class AuthMiddlewareUser implements NestMiddleware {
         where: { id: token.id },
       });
 
+      req.body.admin = user.admin && req.body.admin;
+
+      console.log(req.accepted);
+
       if (user.id === userEditedId) return next();
 
       if (user.admin) return next();
