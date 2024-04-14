@@ -98,4 +98,26 @@ export class UsersService {
       throw e;
     }
   }
+
+  async findUserByToken(token: string) {
+    try {
+      const decodeToken = await this.jwt.verifyAsync(token);
+      const user = await this.prisma.user.findUnique({
+        where: { id: decodeToken.id },
+        select: {
+          id: true,
+          name: true,
+          nick: true,
+          admin: true,
+          createdAt: true,
+        },
+      });
+
+      if (!user) throw new NotFoundException();
+
+      return user;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

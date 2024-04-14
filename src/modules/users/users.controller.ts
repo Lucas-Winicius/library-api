@@ -7,6 +7,7 @@ import {
   Delete,
   Patch,
   Response,
+  Headers,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -38,6 +39,12 @@ export class UsersController {
   @Get()
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get('token')
+  findOneToken(@Headers() headers) {
+    const token = headers.authorization.split(' ')[1];
+    return this.usersService.findUserByToken(token);
   }
 
   @Get(':id')
